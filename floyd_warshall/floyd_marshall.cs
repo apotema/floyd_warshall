@@ -13,15 +13,21 @@ public class FloydMarshall<T>
 
     List<T> nodes = new List<T>();
     Dictionary<T, List<Connection<T>>> _connections = new Dictionary<T, List<Connection<T>>>();
+    public int[,] path;
 
     public int[,] DistanceMatrix(int[,] graph)
     {
         int verticesCount = graph.GetLength(0);
         int[,] distance = new int[verticesCount, verticesCount];
+        path = new int[verticesCount, verticesCount];
 
         for (int i = 0; i < verticesCount; ++i)
             for (int j = 0; j < verticesCount; ++j)
+            {
                 distance[i, j] = graph[i, j];
+                if (i != j)
+                    path[i, j] = j + 1;
+            }
 
         for (int k = 0; k < verticesCount; k++)
         {
@@ -30,7 +36,10 @@ public class FloydMarshall<T>
                 for (int j = 0; j < verticesCount; j++)
                 {
                     if (distance[i, k] + distance[k, j] < distance[i, j])
+                    {
                         distance[i, j] = distance[i, k] + distance[k, j];
+                        path[i, j] = path[i, k];
+                    }
                 }
             }
         }
@@ -89,5 +98,10 @@ public class FloydMarshall<T>
     {
         _connections[node] = new List<Connection<T>>();
         nodes.Add(node);
+    }
+
+    public List<T> Path(T object1, T object2)
+    {
+        
     }
 }

@@ -137,4 +137,30 @@ namespace FloydMarshalTest
         }
     }
 
+    [TestFixture]
+    public class Path
+    {
+        [Test]
+        public void Return_the_path_to_the_node()
+        {
+            var floydMarshall= new FloydMarshall<INodeType>();
+
+            var intialNode = new Mock<INodeType>();
+            var middleNode = new Mock<INodeType>();
+            var lastNode = new Mock<INodeType>();
+
+            floydMarshall.AddNode(intialNode.Object);
+            floydMarshall.AddNode(middleNode.Object);
+            floydMarshall.AddNode(lastNode.Object);
+
+            floydMarshall.Connect(intialNode.Object, middleNode.Object, 7);
+            floydMarshall.Connect(middleNode.Object, lastNode.Object, 10);
+
+
+            Expect(
+                floydMarshall.Path(intialNode.Object, lastNode.Object)
+            ).To.Include(middleNode);
+        }
+    }
+
 }
