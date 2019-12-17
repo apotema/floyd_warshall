@@ -67,9 +67,9 @@ namespace FloydMarshalTest
         public void Node_connection_invalidate_the_current_matrix()
         {
             floydMarshallTwoNodes.Path(node.Object, secondNode.Object);
-            Expect(floydMarshallTwoNodes.distanceMatrix).To.Not.Equal(null);
+            Expect(floydMarshallTwoNodes.GetProperty("distanceMatrix")).To.Not.Equal(null);
             floydMarshallTwoNodes.Connect(node.Object, secondNode.Object, 10);
-            Expect(floydMarshallTwoNodes.distanceMatrix).To.Equal(null);
+            Expect(floydMarshallTwoNodes.GetProperty("distanceMatrix")).To.Equal(null);
         }
     }
 
@@ -181,7 +181,6 @@ namespace FloydMarshalTest
             floydMarshall.Connect(intialNode.Object, middleNode.Object, 7);
             floydMarshall.Connect(middleNode.Object, lastNode.Object, 10);
 
-            //floydMarshall.DistanceMatrix(floydMarshall.GenerateMatrix());
             Expect(floydMarshall.Path(intialNode.Object, lastNode.Object))
                 .To.Contain(middleNode.Object);
         }
@@ -206,7 +205,6 @@ namespace FloydMarshalTest
             floydMarshall.Connect(intialNode.Object, secondMiddleNode.Object, 10);
             floydMarshall.Connect(secondMiddleNode.Object, lastNode.Object, 6);
 
-            //floydMarshall.DistanceMatrix(floydMarshall.GenerateMatrix());
             Expect(floydMarshall.Path(intialNode.Object, lastNode.Object))
                 .To.Not.Contain(middleNode.Object);
             Expect(floydMarshall.Path(intialNode.Object, lastNode.Object))
@@ -243,6 +241,12 @@ namespace FloydMarshalTest
                 return mi.Invoke(o, args);
             }
             return null;
+        }
+
+        public static object GetProperty(this object o, string propertyName)
+        {
+            var mi = o.GetType().GetField(propertyName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            return mi.GetValue(o);
         }
     }
 }

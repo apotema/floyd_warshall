@@ -13,8 +13,8 @@ public class FloydMarshall<T>
 
     List<T> nodes = new List<T>();
     Dictionary<T, List<Connection<T>>> _connections = new Dictionary<T, List<Connection<T>>>();
-    public int[,] pathMatrix;
-    public int[,] distanceMatrix;
+    private int[,] pathMatrix;
+    private int[,] distanceMatrix;
 
     private int[,] DistanceMatrix(int[,] graph)
     {
