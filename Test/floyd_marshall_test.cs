@@ -1,3 +1,4 @@
+using System.Reflection;
 using Moq;
 using NExpect;
 using NUnit.Framework;
@@ -61,6 +62,15 @@ namespace FloydMarshalTest
             floydMarshall.Connect(node.Object, secondNode.Object, 10);
             Expect(floydMarshall.IsConnected(node.Object, secondNode.Object)).To.Equal(false);
         }
+
+        [Test]
+        public void Node_connection_invalidate_the_current_matrix()
+        {
+            floydMarshallTwoNodes.Path(node.Object, secondNode.Object);
+            Expect(floydMarshallTwoNodes.distanceMatrix).To.Not.Equal(null);
+            floydMarshallTwoNodes.Connect(node.Object, secondNode.Object, 10);
+            Expect(floydMarshallTwoNodes.distanceMatrix).To.Equal(null);
+        }
     }
 
     [TestFixture]
@@ -74,7 +84,8 @@ namespace FloydMarshalTest
             floydMarshall.AddNode(node.Object);
             floydMarshall.AddNode(secondNode.Object);
             floydMarshall.Connect(node.Object, secondNode.Object, 10);
-            Expect(floydMarshall.GenerateMatrix().GetLength(0)).To.Equal(2);
+            int[,] matrix = (int[,])floydMarshall.call("GenerateMatrix");
+            Expect(matrix.GetLength(0)).To.Equal(2);
         }
 
         [Test]
@@ -85,13 +96,15 @@ namespace FloydMarshalTest
             floydMarshall.AddNode(node.Object);
             floydMarshall.AddNode(secondNode.Object);
             floydMarshall.Connect(node.Object, secondNode.Object, 10);
-            Expect(floydMarshall.GenerateMatrix().GetLength(1)).To.Equal(2);
+            int[,] matrix = (int[,])floydMarshall.call("GenerateMatrix");
+            Expect(matrix.GetLength(1)).To.Equal(2);
         }
 
         [Test]
         public void Initialize_the_correct_initial_distances()
         {
-            Expect(floydMarshallTwoNodes.GenerateMatrix()[0, 1]).To.Equal(10);
+            int[,] matrix = (int[,])floydMarshallTwoNodes.call("GenerateMatrix");
+            Expect(matrix[0, 1]).To.Equal(10);
         }
 
     }
@@ -103,7 +116,10 @@ namespace FloydMarshalTest
         public void Return_the_distance_between_two_nodes()
         {
             Expect(
-                floydMarshallTwoNodes.Distance(node.Object, secondNode.Object)
+                floydMarshallTwoNodes.call(
+                    "VertexDistance",
+                    new object[] { node.Object, secondNode.Object }
+                )
             ).To.Equal(10);
         }
 
@@ -111,15 +127,22 @@ namespace FloydMarshalTest
         public void Return_max_int_value_if_nodes_are_not_connected()
         {
             Expect(
-                floydMarshallTwoNodes.Distance(secondNode.Object, node.Object)
-            ).To.Equal(int.MaxValue/2);
+                floydMarshallTwoNodes.call(
+                    "VertexDistance",
+                    new object[] { secondNode.Object, node.Object }
+                )
+            ).To.Equal(int.MaxValue / 2);
         }
 
         [Test]
         public void Returns_0_if_nodes_are_equal()
         {
+
             Expect(
-                floydMarshallTwoNodes.Distance(node.Object, node.Object)
+                floydMarshallTwoNodes.call(
+                    "VertexDistance",
+                    new object[] { node.Object, node.Object }
+                )
             ).To.Equal(0);
         }
     }
@@ -130,8 +153,10 @@ namespace FloydMarshalTest
         [Test]
         public void Returns_the_distance_between_the_nodes()
         {
-            var distanceMatrix = floydMarshallTwoNodes.DistanceMatrix(
-                floydMarshallTwoNodes.GenerateMatrix()
+            int[,] matrix = (int[,])floydMarshallTwoNodes.call("GenerateMatrix");
+            int[,] distanceMatrix = (int[, ])floydMarshallTwoNodes.call(
+                "DistanceMatrix",
+                matrix
             );
             Expect(distanceMatrix[0, 1]).To.Equal(10);
         }
@@ -156,10 +181,68 @@ namespace FloydMarshalTest
             floydMarshall.Connect(intialNode.Object, middleNode.Object, 7);
             floydMarshall.Connect(middleNode.Object, lastNode.Object, 10);
 
-            floydMarshall.DistanceMatrix(floydMarshall.GenerateMatrix());
+            //floydMarshall.DistanceMatrix(floydMarshall.GenerateMatrix());
             Expect(floydMarshall.Path(intialNode.Object, lastNode.Object))
                 .To.Contain(middleNode.Object);
         }
+
+        [Test]
+        public void Returns_the_shortest_path()
+        {
+            var floydMarshall = new FloydMarshall<INodeType>();
+
+            var intialNode = new Mock<INodeType>();
+            var middleNode = new Mock<INodeType>();
+            var secondMiddleNode = new Mock<INodeType>();
+            var lastNode = new Mock<INodeType>();
+
+            floydMarshall.AddNode(intialNode.Object);
+            floydMarshall.AddNode(middleNode.Object);
+            floydMarshall.AddNode(secondMiddleNode.Object);
+            floydMarshall.AddNode(lastNode.Object);
+
+            floydMarshall.Connect(intialNode.Object, middleNode.Object, 7);
+            floydMarshall.Connect(middleNode.Object, lastNode.Object, 10);
+            floydMarshall.Connect(intialNode.Object, secondMiddleNode.Object, 10);
+            floydMarshall.Connect(secondMiddleNode.Object, lastNode.Object, 6);
+
+            //floydMarshall.DistanceMatrix(floydMarshall.GenerateMatrix());
+            Expect(floydMarshall.Path(intialNode.Object, lastNode.Object))
+                .To.Not.Contain(middleNode.Object);
+            Expect(floydMarshall.Path(intialNode.Object, lastNode.Object))
+                .To.Contain(secondMiddleNode.Object);
+        }
+
+        [Test]
+        public void Return_null_if_no_path()
+        {
+            var floydMarshall = new FloydMarshall<INodeType>();
+
+            var intialNode = new Mock<INodeType>();
+            var middleNode = new Mock<INodeType>();
+            var lastNode = new Mock<INodeType>();
+
+            floydMarshall.AddNode(intialNode.Object);
+            floydMarshall.AddNode(middleNode.Object);
+            floydMarshall.AddNode(lastNode.Object);
+
+            floydMarshall.Connect(intialNode.Object, middleNode.Object, 7);
+
+            Expect(floydMarshall.Path(intialNode.Object, lastNode.Object))
+                .To.Equal(null);
+        }
     }
 
+    static class AccessExtensions
+    {
+        public static object call(this object o, string methodName, params object[] args)
+        {
+            var mi = o.GetType().GetMethod(methodName, System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (mi != null)
+            {
+                return mi.Invoke(o, args);
+            }
+            return null;
+        }
+    }
 }

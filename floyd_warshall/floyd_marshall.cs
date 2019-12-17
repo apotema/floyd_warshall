@@ -14,8 +14,9 @@ public class FloydMarshall<T>
     List<T> nodes = new List<T>();
     Dictionary<T, List<Connection<T>>> _connections = new Dictionary<T, List<Connection<T>>>();
     public int[,] pathMatrix;
+    public int[,] distanceMatrix;
 
-    public int[,] DistanceMatrix(int[,] graph)
+    private int[,] DistanceMatrix(int[,] graph)
     {
         int verticesCount = graph.GetLength(0);
         int[,] distance = new int[verticesCount, verticesCount];
@@ -42,10 +43,11 @@ public class FloydMarshall<T>
                 }
             }
         }
+        distanceMatrix = distance;
         return distance;
     }
 
-    public int[,] GenerateMatrix()
+    private int[,] GenerateMatrix()
     {
         int size = nodes.Count();
         int[,] matrix = new int[size, size];
@@ -53,13 +55,13 @@ public class FloydMarshall<T>
         {
             for (int j = 0; j < size; j++)
             {
-                matrix[i, j] = Distance(nodes[i], nodes[j]);    
+                matrix[i, j] = VertexDistance(nodes[i], nodes[j]);    
             }
         }
         return matrix;
     }
 
-    public int Distance(T origin, T destiny)
+    private int VertexDistance(T origin, T destiny)
     {
         if (origin.Equals(destiny))
             return 0;
@@ -80,6 +82,7 @@ public class FloydMarshall<T>
     {
         if (!nodes.Contains(node) || !nodes.Contains(secondNode))
             return;
+        distanceMatrix = null;
         var connection = new Connection<T>
         {
             node = secondNode,
@@ -101,15 +104,17 @@ public class FloydMarshall<T>
 
     public List<T> Path(T origin, T destiny)
     {
-        List<T> path = new List<T>();
+        if (distanceMatrix == null)
+            DistanceMatrix(GenerateMatrix());
         int origin_position = nodes.IndexOf(origin);
         int destiny_position = nodes.IndexOf(destiny);
+        if (distanceMatrix[origin_position, destiny_position] == MAX_VALUE)
+            return null;
 
+        List<T> path = new List<T>();
         path.Add(nodes[origin_position]);
-
         while (origin_position != destiny_position)
         {
-            Console.WriteLine(origin_position);
             origin_position = pathMatrix[origin_position, destiny_position];
             path.Add(nodes[origin_position]);
         }
