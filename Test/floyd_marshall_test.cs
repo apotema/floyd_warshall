@@ -156,10 +156,9 @@ namespace FloydMarshalTest
             floydMarshall.Connect(intialNode.Object, middleNode.Object, 7);
             floydMarshall.Connect(middleNode.Object, lastNode.Object, 10);
 
-
-            Expect(
-                floydMarshall.Path(intialNode.Object, lastNode.Object)
-            ).To.Include(middleNode);
+            floydMarshall.DistanceMatrix(floydMarshall.GenerateMatrix());
+            Expect(floydMarshall.Path(intialNode.Object, lastNode.Object))
+                .To.Contain(middleNode.Object);
         }
     }
 

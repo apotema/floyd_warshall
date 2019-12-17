@@ -13,20 +13,19 @@ public class FloydMarshall<T>
 
     List<T> nodes = new List<T>();
     Dictionary<T, List<Connection<T>>> _connections = new Dictionary<T, List<Connection<T>>>();
-    public int[,] path;
+    public int[,] pathMatrix;
 
     public int[,] DistanceMatrix(int[,] graph)
     {
         int verticesCount = graph.GetLength(0);
         int[,] distance = new int[verticesCount, verticesCount];
-        path = new int[verticesCount, verticesCount];
+        pathMatrix = new int[verticesCount, verticesCount];
 
         for (int i = 0; i < verticesCount; ++i)
             for (int j = 0; j < verticesCount; ++j)
             {
                 distance[i, j] = graph[i, j];
-                if (i != j)
-                    path[i, j] = j + 1;
+                pathMatrix[i, j] = j;
             }
 
         for (int k = 0; k < verticesCount; k++)
@@ -38,7 +37,7 @@ public class FloydMarshall<T>
                     if (distance[i, k] + distance[k, j] < distance[i, j])
                     {
                         distance[i, j] = distance[i, k] + distance[k, j];
-                        path[i, j] = path[i, k];
+                        pathMatrix[i, j] = pathMatrix[i, k];
                     }
                 }
             }
@@ -100,8 +99,21 @@ public class FloydMarshall<T>
         nodes.Add(node);
     }
 
-    public List<T> Path(T object1, T object2)
+    public List<T> Path(T origin, T destiny)
     {
-        
+        List<T> path = new List<T>();
+        int origin_position = nodes.IndexOf(origin);
+        int destiny_position = nodes.IndexOf(destiny);
+
+        path.Add(nodes[origin_position]);
+
+        while (origin_position != destiny_position)
+        {
+            Console.WriteLine(origin_position);
+            origin_position = pathMatrix[origin_position, destiny_position];
+            path.Add(nodes[origin_position]);
+        }
+        path.Add(nodes[origin_position]);
+        return path;
     }
 }
