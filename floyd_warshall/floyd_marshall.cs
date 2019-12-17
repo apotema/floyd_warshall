@@ -1,8 +1,4 @@
-﻿// A C# program for Floyd Warshall All 
-// Pairs Shortest Path algorithm. 
-
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using floyd_warshall;
 
@@ -80,8 +76,13 @@ public class FloydMarshall<T>
 
     public void Connect(T node, T secondNode, int weight)
     {
-        if (!nodes.Contains(node) || !nodes.Contains(secondNode))
+        if (!nodes.Contains(node) ||
+            !nodes.Contains(secondNode) ||
+            _connections[node].Exists(c => c.node.Equals(secondNode))
+        )
+        {
             return;
+        }
         distanceMatrix = null;
         var connection = new Connection<T>
         {
@@ -98,8 +99,11 @@ public class FloydMarshall<T>
 
     public void AddNode(T node)
     {
-        _connections[node] = new List<Connection<T>>();
-        nodes.Add(node);
+        if (!Contains(node))
+        {
+            _connections[node] = new List<Connection<T>>();
+            nodes.Add(node);
+        }
     }
 
     public List<T> Path(T origin, T destiny)

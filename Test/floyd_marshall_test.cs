@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Reflection;
+using floyd_warshall;
 using Moq;
 using NExpect;
 using NUnit.Framework;
@@ -37,6 +39,16 @@ namespace FloydMarshalTest
             floydMarshall.AddNode(node.Object);
             Expect(floydMarshall.Contains(node.Object)).To.Equal(true);
         }
+
+        [Test]
+        public void Does_not_allow_equal_nodes()
+        {
+            FloydMarshall<INodeType> floydMarshall = new FloydMarshall<INodeType>();
+            floydMarshall.AddNode(node.Object);
+            floydMarshall.AddNode(node.Object);
+            List<INodeType> nodes = (List<INodeType>)floydMarshall.GetProperty("nodes");
+            Expect(nodes.Count).To.Equal(1);
+        }
     }
 
     [TestFixture]
@@ -58,9 +70,23 @@ namespace FloydMarshalTest
         {
             FloydMarshall<INodeType> floydMarshall = new FloydMarshall<INodeType>();
 
-
             floydMarshall.Connect(node.Object, secondNode.Object, 10);
             Expect(floydMarshall.IsConnected(node.Object, secondNode.Object)).To.Equal(false);
+        }
+
+        [Test]
+        public void Does_not_generate_two_connections()
+        {
+            FloydMarshall<INodeType> floydMarshall = new FloydMarshall<INodeType>();
+
+            floydMarshall.AddNode(node.Object);
+            floydMarshall.AddNode(secondNode.Object);
+
+            floydMarshall.Connect(node.Object, secondNode.Object, 10);
+            floydMarshall.Connect(node.Object, secondNode.Object, 9);
+
+            Dictionary<INodeType, List<Connection<INodeType>>> _connections = (Dictionary<INodeType, List<Connection<INodeType>>>)floydMarshall.GetProperty("_connections");
+            Expect(_connections[node.Object].Count).To.Equal(1);
         }
 
         [Test]
@@ -68,7 +94,11 @@ namespace FloydMarshalTest
         {
             floydMarshallTwoNodes.Path(node.Object, secondNode.Object);
             Expect(floydMarshallTwoNodes.GetProperty("distanceMatrix")).To.Not.Equal(null);
-            floydMarshallTwoNodes.Connect(node.Object, secondNode.Object, 10);
+
+            var thirdNode = new Mock<INodeType>();
+            floydMarshallTwoNodes.AddNode(thirdNode.Object);
+            floydMarshallTwoNodes.Connect(node.Object, thirdNode.Object, 10);
+
             Expect(floydMarshallTwoNodes.GetProperty("distanceMatrix")).To.Equal(null);
         }
     }
