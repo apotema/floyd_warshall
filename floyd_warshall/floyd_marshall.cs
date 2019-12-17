@@ -6,9 +6,8 @@ public class FloydMarshall<T>
 {
 
     const int MAX_VALUE = int.MaxValue / 2;
-
-    List<T> nodes = new List<T>();
-    Dictionary<T, List<Connection<T>>> _connections = new Dictionary<T, List<Connection<T>>>();
+    private readonly List<T> nodes = new List<T>();
+    private readonly Dictionary<T, List<Connection<T>>> _connections = new Dictionary<T, List<Connection<T>>>();
     private int[,] pathMatrix;
     private int[,] distanceMatrix;
 
