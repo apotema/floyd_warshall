@@ -2,7 +2,7 @@
 using System.Linq;
 using floyd_warshall;
 
-public class FloydMarshall<T>
+public class FloydWarshall<T>
 {
 
     const int MAX_VALUE = int.MaxValue / 2;
