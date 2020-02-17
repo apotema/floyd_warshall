@@ -111,10 +111,10 @@ public class FloydWarshall<T>
             DistanceMatrix(GenerateMatrix());
         int origin_position = nodes.IndexOf(origin);
         int destiny_position = nodes.IndexOf(destiny);
-        if (distanceMatrix[origin_position, destiny_position] == MAX_VALUE)
-            return null;
-
         List<T> path = new List<T>();
+        if (distanceMatrix[origin_position, destiny_position] == MAX_VALUE)
+            return path;
+
         path.Add(nodes[origin_position]);
         while (origin_position != destiny_position)
         {

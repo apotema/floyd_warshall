@@ -245,7 +245,7 @@ namespace FloydWarshallTest
         }
 
         [Test]
-        public void Return_null_if_no_path()
+        public void Return_empty_array_if_no_path()
         {
             var floydWarshall = new FloydWarshall<INodeType>();
 
@@ -260,7 +260,7 @@ namespace FloydWarshallTest
             floydWarshall.Connect(intialNode.Object, middleNode.Object, 7);
 
             Expect(floydWarshall.Path(intialNode.Object, lastNode.Object))
-                .To.Equal(null);
+                .To.Be.Empty();
         }
     }
 
