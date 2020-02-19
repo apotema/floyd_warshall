@@ -5,8 +5,9 @@
 
  jobs:
    build:
-     executor: win/default     
-    
+     executor: win/default
+
      steps:
        - checkout
        - run: dotnet build
+       - run: dotnet test
