@@ -14,5 +14,5 @@
        - run:
           name: "Print Working Directory"
           command: pwd
-      - store_artifacts:
+       - store_artifacts:
           path: C:\Users\circleci\project\test_coverage
