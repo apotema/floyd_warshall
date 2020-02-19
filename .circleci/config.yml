@@ -16,3 +16,5 @@
           command: pwd
        - store_artifacts:
           path: C:\Users\circleci\project\test_coverage
+       - store_test_results:
+          path: C:\Users\circleci\project\test_coverage
