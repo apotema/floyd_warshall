@@ -10,11 +10,16 @@
      steps:
        - checkout
        - run: dotnet build
-       - run: dotnet.exe test -v n --results-directory:test_coverage --collect:"Code Coverage"
+       - run: dotnet test --no-build --logger "trx"
        - run:
-          name: "Print Working Directory"
-          command: pwd
-       - store_artifacts:
-          path: C:\Users\circleci\project\test_coverage
+         name: test results
+         when: always
+         command: |
+            dotnet tool install -g trx2junit
+            export PATH="$PATH:/root/.dotnet/tools"
+            trx2junit tests/**/TestResults/*.trx
        - store_test_results:
-          path: C:\Users\circleci\project\test_coverage
+          path: tests/TestResults
+       - store_artifacts:
+          path: tests/TestResults
+          destination: TestResults
