@@ -121,7 +121,6 @@ public class FloydWarshall<T>
             origin_position = pathMatrix[origin_position, destiny_position];
             path.Add(nodes[origin_position]);
         }
-        path.Add(nodes[origin_position]);
         return path;
     }
 }
