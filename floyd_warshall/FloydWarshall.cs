@@ -9,21 +9,18 @@ public class FloydWarshall<T>
     private readonly Dictionary<T, List<Connection<T>>> _connections = new Dictionary<T, List<Connection<T>>>();
     private int[,] pathMatrix;
     private int[,] distanceMatrix;
-    private int[,] nodesDistance;
 
     private int[,] DistanceMatrix(int[,] graph)
     {
         int verticesCount = graph.GetLength(0);
         int[,] distance = new int[verticesCount, verticesCount];
         this.pathMatrix = new int[verticesCount, verticesCount];
-        this.nodesDistance = new int[verticesCount, verticesCount];
 
         for (int i = 0; i < verticesCount; ++i)
             for (int j = 0; j < verticesCount; ++j)
             {
                 distance[i, j] = graph[i, j];
                 pathMatrix[i, j] = j;
-                nodesDistance[i, j] = 0;
             }
 
         for (int k = 0; k < verticesCount; k++)
@@ -36,7 +33,6 @@ public class FloydWarshall<T>
                     {
                         distance[i, j] = distance[i, k] + distance[k, j];
                         pathMatrix[i, j] = pathMatrix[i, k];
-                        nodesDistance[i, j]++; 
                     }
                 }
             }
@@ -129,14 +125,14 @@ public class FloydWarshall<T>
             return new T[] { };
         }
 
-        T[] temp = new T[nodesDistance[origin_position, destiny_position] + 2];
-        var i = 0;
-        temp[i] = nodes[origin_position];
+        List<T> temp = new List<T>();
+        
+        temp.Add(nodes[origin_position]);
         while (origin_position != destiny_position)
         {
             origin_position = pathMatrix[origin_position, destiny_position];
-            temp[++i] = nodes[origin_position];
+            temp.Add(nodes[origin_position]);
         }
-        return temp;
+        return temp.ToArray();
     }
 }

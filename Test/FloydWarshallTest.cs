@@ -203,22 +203,25 @@ namespace FloydWarshallTest
         {
             var floydWarshall = new FloydWarshall<INodeType>();
 
-            var intialNode = new Mock<INodeType>();
-            var middleNode = new Mock<INodeType>();
-            var lastNode = new Mock<INodeType>();
+            var firsNode = new Mock<INodeType>();
+            var secondNode = new Mock<INodeType>();
+            var thirdNode = new Mock<INodeType>();
+            var fourthNode = new Mock<INodeType>();
 
-            floydWarshall.AddNode(intialNode.Object);
-            floydWarshall.AddNode(middleNode.Object);
-            floydWarshall.AddNode(lastNode.Object);
+            floydWarshall.AddNode(firsNode.Object);
+            floydWarshall.AddNode(secondNode.Object);
+            floydWarshall.AddNode(thirdNode.Object);
+            floydWarshall.AddNode(fourthNode.Object);
 
-            floydWarshall.Connect(intialNode.Object, middleNode.Object, 7);
-            floydWarshall.Connect(middleNode.Object, lastNode.Object, 10);
+            floydWarshall.Connect(firsNode.Object, secondNode.Object, 7);
+            floydWarshall.Connect(secondNode.Object, thirdNode.Object, 10);
+            floydWarshall.Connect(thirdNode.Object, fourthNode.Object, 10);
 
-            Expect(floydWarshall.Path(intialNode.Object, lastNode.Object))
-                .To.Contain(middleNode.Object);
-            Expect(floydWarshall.Path(intialNode.Object, middleNode.Object).Length)
+            Expect(floydWarshall.Path(firsNode.Object, fourthNode.Object))
+                .To.Contain(secondNode.Object);
+            Expect(floydWarshall.Path(firsNode.Object, secondNode.Object).Length)
                 .To.Equal(2);
-            Expect(floydWarshall.Path(intialNode.Object, lastNode.Object).Length)
+            Expect(floydWarshall.Path(firsNode.Object, thirdNode.Object).Length)
                 .To.Equal(3);
         }
 
