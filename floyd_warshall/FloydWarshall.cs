@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using FloydWarshall;
 
 public class FloydWarshall<T>
@@ -10,18 +9,21 @@ public class FloydWarshall<T>
     private readonly Dictionary<T, List<Connection<T>>> _connections = new Dictionary<T, List<Connection<T>>>();
     private int[,] pathMatrix;
     private int[,] distanceMatrix;
+    private int[,] nodesDistance;
 
     private int[,] DistanceMatrix(int[,] graph)
     {
         int verticesCount = graph.GetLength(0);
         int[,] distance = new int[verticesCount, verticesCount];
-        pathMatrix = new int[verticesCount, verticesCount];
+        this.pathMatrix = new int[verticesCount, verticesCount];
+        this.nodesDistance = new int[verticesCount, verticesCount];
 
         for (int i = 0; i < verticesCount; ++i)
             for (int j = 0; j < verticesCount; ++j)
             {
                 distance[i, j] = graph[i, j];
                 pathMatrix[i, j] = j;
+                nodesDistance[i, j] = 0;
             }
 
         for (int k = 0; k < verticesCount; k++)
@@ -34,6 +36,7 @@ public class FloydWarshall<T>
                     {
                         distance[i, j] = distance[i, k] + distance[k, j];
                         pathMatrix[i, j] = pathMatrix[i, k];
+                        nodesDistance[i, j]++; 
                     }
                 }
             }
@@ -44,7 +47,7 @@ public class FloydWarshall<T>
 
     private int[,] GenerateMatrix()
     {
-        int size = nodes.Count();
+        int size = nodes.Count;
         int[,] matrix = new int[size, size];
         for(int i = 0; i < size; i++)
         {
@@ -59,11 +62,19 @@ public class FloydWarshall<T>
     private int VertexDistance(T origin, T destiny)
     {
         if (origin.Equals(destiny))
+        {
             return 0;
-        var connection = _connections[origin].FirstOrDefault(c => c.node.Equals(destiny));
-        if (connection == null)
-            return MAX_VALUE;
-        return connection.weight;
+        }
+
+        foreach (Connection<T> c in _connections[origin])
+        {
+            if (c.node.Equals(destiny))
+            {
+                return c.weight;
+            }
+        }
+
+        return MAX_VALUE;
     }
 
     public bool IsConnected(T node, T secondNode)
@@ -93,7 +104,7 @@ public class FloydWarshall<T>
 
     public bool Contains(T node)
     {
-        return (nodes.Contains(node));
+        return nodes.Contains(node);
     }
 
     public void AddNode(T node)
@@ -105,22 +116,27 @@ public class FloydWarshall<T>
         }
     }
 
-    public List<T> Path(T origin, T destiny)
+    public T[] Path(T origin, T destiny)
     {
         if (distanceMatrix == null)
+        {
             DistanceMatrix(GenerateMatrix());
+        }
         int origin_position = nodes.IndexOf(origin);
         int destiny_position = nodes.IndexOf(destiny);
-        List<T> path = new List<T>();
         if (distanceMatrix[origin_position, destiny_position] == MAX_VALUE)
-            return path;
+        {
+            return new T[] { };
+        }
 
-        path.Add(nodes[origin_position]);
+        T[] temp = new T[nodesDistance[origin_position, destiny_position] + 2];
+        var i = 0;
+        temp[i] = nodes[origin_position];
         while (origin_position != destiny_position)
         {
             origin_position = pathMatrix[origin_position, destiny_position];
-            path.Add(nodes[origin_position]);
+            temp[++i] = nodes[origin_position];
         }
-        return path;
+        return temp;
     }
 }

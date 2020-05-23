@@ -216,7 +216,9 @@ namespace FloydWarshallTest
 
             Expect(floydWarshall.Path(intialNode.Object, lastNode.Object))
                 .To.Contain(middleNode.Object);
-            Expect(floydWarshall.Path(intialNode.Object, lastNode.Object).Count)
+            Expect(floydWarshall.Path(intialNode.Object, middleNode.Object).Length)
+                .To.Equal(2);
+            Expect(floydWarshall.Path(intialNode.Object, lastNode.Object).Length)
                 .To.Equal(3);
         }
 
