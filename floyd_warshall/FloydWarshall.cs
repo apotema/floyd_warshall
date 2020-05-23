@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using floyd_warshall;
+using FloydWarshall;
 
 public class FloydWarshall<T>
 {

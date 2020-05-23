@@ -15,6 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\floyd_warshall\floyd_warshall.csproj" />
+    <ProjectReference Include="..\floyd_warshall\FloydWarshall.csproj" />
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
-using floyd_warshall;
+using FloydWarshall;
 using Moq;
 using NExpect;
 using NUnit.Framework;

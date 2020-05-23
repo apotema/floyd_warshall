@@ -1,5 +1,5 @@
 ﻿using System;
-namespace floyd_warshall
+namespace FloydWarshall
 {
     public class Connection<T>
     {

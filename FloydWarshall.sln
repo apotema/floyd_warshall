@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "floyd_warshall", "floyd_warshall\floyd_warshall.csproj", "{5F821716-ACD8-433A-B517-84310F23A3AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloydWarshall", "floyd_warshall\FloydWarshall.csproj", "{5F821716-ACD8-433A-B517-84310F23A3AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{CDBC2021-EED4-4E9E-B04E-99D83F6CBA94}"
 EndProject
